@@ -1,0 +1,84 @@
+<mat-card class="login-page">
+  <mat-card-title>Login</mat-card-title>
+  <mat-card-content>
+
+    <form class="login-form data-form" #loginForm="ngForm" (ngSubmit)="login(loginForm, $event)">
+
+      <mat-form-field>
+
+<!--        When the value of updateOn is set to submit-->
+<!--        the value of the email field is only going to be set when we submit the form-->
+<!--        [ngModelOptions]="{updateOn: 'blur'}"-->
+        <input matInput type="email" name="email"
+               [(ngModel)]="val.email"
+               #email="ngModel"
+
+               [ngModelOptions]="{updateOn: 'blur'}"
+               (ngModelChange)="onEmailChange($event)"
+               (change)="onEmailChange2($event)"
+               autocomplete="off"
+               required
+               email
+               minlength="3"
+               maxlength="20"
+               placeholder="Email">
+
+        <mat-error *ngIf="email.errors?.required">Email is required enter</mat-error>
+        <mat-error *ngIf="email.errors?.minlength">
+          Your email must have {{ email.errors?.minlength.requiredLength}} chars,
+          but it ony has {{ email.errors?.minlength.actualLength}}
+        </mat-error>
+        <mat-error *ngIf="email.errors?.email">
+          This is an invalid email.
+        </mat-error>
+      </mat-form-field>
+
+
+      <mat-form-field>
+
+        <input matInput type="password" name="password"
+               #password="ngModel"
+               required
+               minlength="8"
+               passwordStrength
+               [(ngModel)]="val.password"
+               placeholder="Password">
+        <mat-error *ngIf="password.errors?.passwordStrength">
+          Password most be better
+        </mat-error>
+
+        <mat-error *ngIf="password.errors?.required">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="password.errors?.minlength">
+          Length is not correct
+        </mat-error>
+
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">
+        Login
+      </button>
+
+    </form>
+
+    <div class="form-val">
+      Value Fields: <br>
+      {{ loginForm.value | json}}
+    </div>
+
+<!--    <div class="form-val">-->
+<!--      Email Validation:<br>-->
+<!--      {{ 'touched: ' + email.touched | json}}-->
+<!--      {{ 'untouched: ' + email.untouched | json}}-->
+<!--      {{ 'pristine: ' + email.pristine | json}}-->
+<!--      {{ 'dirty: ' +email.dirty | json}}-->
+<!--    </div>-->
+
+<!--    <div class="form-val">-->
+<!--      Email Validation:<br>-->
+<!--      {{ email.errors | json}}-->
+<!--    </div>-->
+
+  </mat-card-content>
+</mat-card>
