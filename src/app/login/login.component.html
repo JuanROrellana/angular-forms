@@ -10,9 +10,8 @@
 <!--        the value of the email field is only going to be set when we submit the form-->
 <!--        [ngModelOptions]="{updateOn: 'blur'}"-->
         <input matInput type="email" name="email"
-               [(ngModel)]="val.email"
+               ngModel
                #email="ngModel"
-
                [ngModelOptions]="{updateOn: 'blur'}"
                (ngModelChange)="onEmailChange($event)"
                (change)="onEmailChange2($event)"
@@ -22,7 +21,6 @@
                minlength="3"
                maxlength="20"
                placeholder="Email">
-
         <mat-error *ngIf="email.errors?.required">Email is required enter</mat-error>
         <mat-error *ngIf="email.errors?.minlength">
           Your email must have {{ email.errors?.minlength.requiredLength}} chars,
@@ -35,26 +33,25 @@
 
 
       <mat-form-field>
-
         <input matInput type="password" name="password"
                #password="ngModel"
                required
                minlength="8"
                passwordStrength
-               [(ngModel)]="val.password"
+               ngModel
                placeholder="Password">
-        <mat-error *ngIf="password.errors?.passwordStrength">
-          Password most be better
-        </mat-error>
-
         <mat-error *ngIf="password.errors?.required">
           Password is required
         </mat-error>
-        <mat-error *ngIf="password.errors?.minlength">
-          Length is not correct
-        </mat-error>
-
       </mat-form-field>
+      <ng-container *ngIf="password.errors | onlyOneError:['required', 'minlength', 'passwordStrength'] as error">
+        <div class="field-message" *ngIf="error?.minlength">
+          Min length is not correct ({{ error?.minlength.requiredLength }}),
+        </div>
+        <div class="field-message" *ngIf="error?.passwordStrength">
+          Password most be better
+        </div>
+      </ng-container>
 
       <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">
         Login
@@ -64,7 +61,7 @@
 
     <div class="form-val">
       Value Fields: <br>
-      {{ loginForm.value | json}}
+      {{ loginForm?.value | json}}
     </div>
 
 <!--    <div class="form-val">-->
