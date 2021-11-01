@@ -7,20 +7,42 @@
       <mat-form-field>
 
         <input matInput type="email" name="email"
-               [formControl]="email"
+               formControlName="email"
                placeholder="Email">
+
+        <mat-error *ngIf="email.errors?.required">Email is required enter</mat-error>
+        <mat-error *ngIf="email.errors?.minlength">
+          Your email must have {{ email.errors?.minlength.requiredLength}} chars,
+          but it ony has {{ email.errors?.minlength.actualLength}}
+        </mat-error>
+        <mat-error *ngIf="email.errors?.email">
+          This is an invalid email.
+        </mat-error>
 
       </mat-form-field>
 
       <mat-form-field>
 
         <input matInput
-               [formControl]="password"
+               formControlName="password"
                type="password" placeholder="Password">
+
+        <mat-error *ngIf="password.errors?.required">
+          Password is required
+        </mat-error>
+
+        <ng-container *ngIf="password.errors | onlyOneError:['required', 'minlength', 'passwordStrength'] as error">
+          <div class="field-message" *ngIf="error?.minlength">
+            Min length is not correct ({{ error?.minlength.requiredLength }}),
+          </div>
+          <div class="field-message" *ngIf="error?.passwordStrength">
+            Password most be better
+          </div>
+        </ng-container>
 
       </mat-form-field>
 
-      <button mat-raised-button color="primary">
+      <button mat-raised-button color="primary" [disabled]="!form.valid">
         Login
       </button>
 
