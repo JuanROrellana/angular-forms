@@ -6,6 +6,11 @@ import {filter} from 'rxjs/operators';
 import {CourseTitleValidator} from '../../validators/course-title.validator';
 import {Course} from '../../model/course';
 
+interface CourseCategory {
+  code: string;
+  description: string;
+}
+
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'create-course-step-1',
@@ -24,13 +29,19 @@ export class CreateCourseStep1Component implements OnInit {
       asyncValidators: [CourseTitleValidator(this.courses)],
       updateOn: 'blur'
     }],
+    releaseAt: [new Date(), Validators.required],
+    downloadsAllowed: [false, Validators.requiredTrue],
+    longDescription: ['', [Validators.required, Validators.minLength(3)]],
+    category: ['BEGINNER', Validators.required],
   });
+
+  courseCategories$: Observable<CourseCategory[]>;
 
   constructor(private fb: FormBuilder, private courses: CoursesService) {
   }
 
   ngOnInit() {
-
+    this.courseCategories$ = this.courses.findCourseCategories();
   }
 
   get courseTitle() {
