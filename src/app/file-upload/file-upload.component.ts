@@ -7,10 +7,40 @@ import {noop, of} from 'rxjs';
 
 @Component({
   selector: 'file-upload',
-  templateUrl: "file-upload.component.html",
-  styleUrls: ["file-upload.component.scss"]
+  templateUrl: 'file-upload.component.html',
+  styleUrls: ['file-upload.component.scss']
 })
 export class FileUploadComponent {
 
+  @Input()
+  requiredFileType: string;
 
+  fileName = '';
+  disabled = false;
+  fileUploadError = false;
+  fileUploadSuccess = false;
+  uploadProgress:number;
+
+  constructor(private http: HttpClient) {
+  }
+
+  onClick(fileUpload: HTMLInputElement) {
+    fileUpload.click();
+  }
+
+  onFileSelected(event) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.fileName = file.name;
+      const formData = new FormData();
+      formData.append('thumbnail', file);
+      this.http.post('/api/thumbnail-upload', formData)
+        .pipe(
+        catchError(error => {
+          this.fileUploadError = true;
+          return of(error);
+        })
+      ).subscribe();
+    }
+  }
 }
