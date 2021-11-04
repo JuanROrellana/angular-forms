@@ -19,7 +19,7 @@ export class FileUploadComponent {
   disabled = false;
   fileUploadError = false;
   fileUploadSuccess = false;
-  uploadProgress:number;
+  uploadProgress: number;
 
   constructor(private http: HttpClient) {
   }
@@ -34,13 +34,24 @@ export class FileUploadComponent {
       this.fileName = file.name;
       const formData = new FormData();
       formData.append('thumbnail', file);
-      this.http.post('/api/thumbnail-upload', formData)
+      this.http.post('/api/thumbnail-upload', formData, {
+        reportProgress: true,
+        observe: 'events'
+      })
         .pipe(
-        catchError(error => {
-          this.fileUploadError = true;
-          return of(error);
-        })
-      ).subscribe();
+          catchError(error => {
+            this.fileUploadError = true;
+            return of(error);
+          }),
+          finalize(() => {
+            this.uploadProgress = null;
+          })
+          // tslint:disable-next-line:no-shadowed-variable
+      ).subscribe(event => {
+        if (event.type == HttpEventType.UploadProgress) {
+          this.uploadProgress = Math.round(100 * (event.loaded / event.total));
+        }
+      });
     }
   }
 }
